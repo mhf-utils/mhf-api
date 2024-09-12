@@ -21,10 +21,9 @@ var item_routes = []Route{
 	},
 }
 
-func GetRouterItem(log *logger.Logger, binary_file *binary.BinaryFile) *mux.Router {
+func GetRouterItem(router *mux.Router, log *logger.Logger, binary_file *binary.BinaryFile) *mux.Router {
 	log.Info("MHF-API:middlewares:item:GetRouterItem")
 	controller := controllers.NewControllerItem(log, binary_file)
-	router := mux.NewRouter()
 
 	for _, route := range item_routes {
 		handler := createDynamicHandler(controller, route.Handler)

@@ -1,5 +1,13 @@
 {
   "Mhfdat": {
-    "FilePath": "YOUR_BINARY_FILE"
+    "En": {
+      "FilePath": ""
+    },
+    "Fr": {
+      "FilePath": "/home/homework/homelab/www/projects/monster-hunter/mezelounge/front/forge-test/input/mhfdat.bin"
+    },
+    "Jp": {
+      "FilePath": "/home/homework/Téléchargements/jp.bin"
+    }
   }
 }

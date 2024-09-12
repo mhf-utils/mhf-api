@@ -18,12 +18,18 @@ type Config struct {
 	NewRelic NewRelic
 }
 
-type Mhfdat struct {
+type Logger struct {
+	Format   string
 	FilePath string
 }
 
-type Logger struct {
-	Format   string
+type Mhfdat struct {
+	En MhfdatInfo
+	Fr MhfdatInfo
+	Jp MhfdatInfo
+}
+
+type MhfdatInfo struct {
 	FilePath string
 }
 type NewRelic struct {

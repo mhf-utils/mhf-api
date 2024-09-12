@@ -21,10 +21,9 @@ var quest_routes = []Route{
 	},
 }
 
-func GetRouterQuest(log *logger.Logger, binary_file *binary.BinaryFile) *mux.Router {
+func GetRouterQuest(router *mux.Router, log *logger.Logger, binary_file *binary.BinaryFile) *mux.Router {
 	log.Info("MHF-API:middlewares:quest:GetRouterQuest")
 	controller := controllers.NewControllerQuest(log, binary_file)
-	router := mux.NewRouter()
 
 	for _, route := range quest_routes {
 		handler := createDynamicHandler(controller, route.Handler)

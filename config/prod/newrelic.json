@@ -1,6 +1,6 @@
 {
   "NewRelic": {
-    "License": "YOUR_LICENSE_KEY",
+    "License": "<LICENSE_KEY>",
     "AppName": "mhf-api",
     "AppLogForwardingEnabled": true
   }

@@ -25,20 +25,12 @@ func Logging(log *logger.Logger, newRelicApp *newrelic.Application) Middleware {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 			logWithContext := log.WithContext(context_middlewares_logger, "method:Logging")
-			clientIP       := req.RemoteAddr
-			endpoint       := req.URL.Path
-			method         := req.Method
-			userAgent      := req.UserAgent()
-			txn            := newRelicApp.StartTransaction(endpoint)
-			
-			defer txn.End()
+			clientIP := req.RemoteAddr
+			endpoint := req.URL.Path
+			userAgent := req.UserAgent()
+			txn := newRelicApp.StartTransaction(endpoint)
 
-			if !IsValidEndpoint(endpoint, method) {
-				errorMessage := fmt.Sprintf("Sorry, the endpoint '%s' you are trying to access is not available at this time. Please check the URL and try again later.", endpoint)
-				http.Error(res, errorMessage, http.StatusInternalServerError)
-				logWithContext.Error(fmt.Sprintf("Invalid endpoint - Endpoint: %s | Method: %s | ClientIP: %s | UserAgent: %s", endpoint, req.Method, clientIP, userAgent))
-				return
-			}
+			defer txn.End()
 
 			logWithContext.Info(fmt.Sprintf("Request received - Endpoint: %s | Method: %s | ClientIP: %s | UserAgent: %s", endpoint, req.Method, clientIP, userAgent))
 

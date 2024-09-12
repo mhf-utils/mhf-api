@@ -1,5 +1,13 @@
 {
   "Mhfdat": {
-    "FilePath": "YOUR_BINARY_FILE"
+    "En": {
+      "FilePath": "<MHFDAT_PATH>"
+    },
+    "Fr": {
+      "FilePath": "<MHFDAT_PATH>"
+    },
+    "Jp": {
+      "FilePath": "<MHFDAT_PATH>"
+    }
   }
 }

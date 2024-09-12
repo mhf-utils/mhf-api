@@ -21,10 +21,9 @@ var weapon_ranged_routes = []Route{
 	},
 }
 
-func GetRouterWeaponRanged(log *logger.Logger, binary_file *binary.BinaryFile) *mux.Router {
+func GetRouterWeaponRanged(router *mux.Router, log *logger.Logger, binary_file *binary.BinaryFile) *mux.Router {
 	log.Info("MHF-API:middlewares:weapon_ranged:GetRouterWeaponRanged")
 	controller := controllers.NewControllerWeaponRanged(log, binary_file)
-	router := mux.NewRouter()
 
 	for _, route := range weapon_ranged_routes {
 		handler := createDynamicHandler(controller, route.Handler)

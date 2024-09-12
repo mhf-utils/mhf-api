@@ -1,15 +1,17 @@
 package middlewares
 
 import (
+	"fmt"
 	"log"
-	"mhf-api/utils/binary"
-	"mhf-api/utils/logger"
 	"net/http"
 	"reflect"
 	"regexp"
 	"strings"
 
 	"github.com/gorilla/mux"
+
+	"mhf-api/utils/binary"
+	"mhf-api/utils/logger"
 )
 
 type Route struct {
@@ -18,26 +20,38 @@ type Route struct {
 	Method   string
 }
 
-func GetRouter(log *logger.Logger, binary_file *binary.BinaryFile) *mux.Router {
+func GetRouter(router *mux.Router, log *logger.Logger, binary_file *binary.BinaryFile) *mux.Router {
 	log.Info("MHF-API:middlewares:router:GetRouter")
-	router := mux.NewRouter()
 
-	router_equipment := GetRouterEquipment(log, binary_file)
-	router_item := GetRouterItem(log, binary_file)
-	router_quest := GetRouterQuest(log, binary_file)
-	router_weapon_melee := GetRouterWeaponMelee(log, binary_file)
-	router_weapon_ranged := GetRouterWeaponRanged(log, binary_file)
-
-	router.PathPrefix("/equipments").Handler(router_equipment)
-	router.PathPrefix("/items").Handler(router_item)
-	router.PathPrefix("/quests").Handler(router_quest)
-	router.PathPrefix("/weapons/melee").Handler(router_weapon_melee)
-	router.PathPrefix("/weapons/ranged").Handler(router_weapon_ranged)
+	GetRouterEquipment(router, log, binary_file)
+	GetRouterItem(router, log, binary_file)
+	GetRouterQuest(router, log, binary_file)
+	GetRouterWeaponMelee(router, log, binary_file)
+	GetRouterWeaponRanged(router, log, binary_file)
 
 	return router
 }
 
-func IsValidEndpoint(endpoint string, method string) bool {
+func RouterKeeper(log *logger.Logger, locales []string) Middleware {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+			clientIP := req.RemoteAddr
+			endpoint := req.URL.Path
+			method := req.Method
+
+			if !isValidEndpoint(locales, endpoint, method) {
+				errorMessage := fmt.Sprintf("Sorry, the endpoint '%s' you are trying to access is not available at this time. Please check the URL and try again later.", endpoint)
+				http.Error(res, errorMessage, http.StatusInternalServerError)
+				log.Error(fmt.Sprintf("Invalid endpoint - Endpoint: %s | Method: %s | ClientIP: %s", endpoint, method, clientIP))
+				return
+			}
+
+			next.ServeHTTP(res, req)
+		})
+	}
+}
+
+func isValidEndpoint(locales []string, endpoint string, method string) bool {
 	var routes []Route
 	routes = append(routes, equipment_routes...)
 	routes = append(routes, item_routes...)
@@ -53,15 +67,19 @@ func IsValidEndpoint(endpoint string, method string) bool {
 		route_pattern := route.Endpoint
 		route_pattern = strings.ReplaceAll(route_pattern, "{id}", "[0-9]+")
 		route_pattern = strings.ReplaceAll(route_pattern, "{type}", ".+")
-		matched, err := regexp.MatchString("^"+route_pattern+"$", endpoint)
 
-		if err != nil {
-			log.Printf("Error compiling regex for endpoint %s: %s", route.Endpoint, err)
-			continue
-		}
+		for _, locale := range locales {
+			full_pattern := "^" + locale + route_pattern + "$"
+			matched, err := regexp.MatchString(full_pattern, endpoint)
 
-		if matched {
-			return true
+			if err != nil {
+				log.Printf("Error compiling regex for endpoint %s: %s", route.Endpoint, err)
+				continue
+			}
+
+			if matched {
+				return true
+			}
 		}
 	}
 

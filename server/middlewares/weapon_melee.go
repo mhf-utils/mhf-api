@@ -21,10 +21,9 @@ var weapon_melee_routes = []Route{
 	},
 }
 
-func GetRouterWeaponMelee(log *logger.Logger, binary_file *binary.BinaryFile) *mux.Router {
+func GetRouterWeaponMelee(router *mux.Router, log *logger.Logger, binary_file *binary.BinaryFile) *mux.Router {
 	log.Info("MHF-API:middlewares:weapon_melee:GetRouterWeaponMelee")
 	controller := controllers.NewControllerWeaponMelee(log, binary_file)
-	router := mux.NewRouter()
 
 	for _, route := range weapon_melee_routes {
 		handler := createDynamicHandler(controller, route.Handler)
