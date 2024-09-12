@@ -3,14 +3,12 @@ package controllers
 import (
 	"encoding/json"
 	"io"
+	"mhf-api/core"
 	"mhf-api/server/models"
 	"mhf-api/utils/binary"
 	"mhf-api/utils/logger"
 	"mhf-api/utils/pointers"
 	"net/http"
-	"strconv"
-
-	"github.com/gorilla/mux"
 )
 
 var quest_types = map[string]models.QuestType{
@@ -53,88 +51,53 @@ func NewControllerQuest(log *logger.Logger, binary_file *binary.BinaryFile) *Con
 }
 
 func (controller *ControllerQuest) List(res http.ResponseWriter, req *http.Request) {
-	var entries []models.Quest
 	query := req.URL.Query()
-	query_quest_type := query.Get("quest_type")
-	if query_quest_type == "all" {
-		for key, quest_type := range quest_types {
-			quests := controller.getCategory(
-				key,
-				quest_type.From,
-				quest_type.To,
-			)
-			entries = append(entries, quests...)
-		}
-		json.NewEncoder(res).Encode(entries)
+	query_type := query.Get("type")
+
+	if query_type == "" {
+		json.NewEncoder(res).Encode("Query params 'type' is required. Available: [  quest_*, quest_**, quest_***, quest_****, quest_*****, quest_****** ]")
+		return
 	}
 
-	quest_type, exists := quest_types[query_quest_type]
+	quest_type, exists := quest_types[query_type]
 	if !exists {
-		json.NewEncoder(res).Encode("quest_type not provided")
+		json.NewEncoder(res).Encode("Query params 'type' is required. Available: [  quest_*, quest_**, quest_***, quest_****, quest_*****, quest_****** ]")
+		return
 	}
 
-	quests := controller.getCategory(
-		query_quest_type,
-		quest_type.From,
-		quest_type.To,
-	)
-	json.NewEncoder(res).Encode(quests)
+	extractFunc := func(index int) models.Quest {
+		return controller.getEntryByIndex(index, models.QuestType{
+			Type: query_type,
+			From: quest_type.From,
+			To:   quest_type.To,
+		})
+	}
+	core.Paginate(res, req, quest_type.From, quest_type.To, pointers.QuestLength, extractFunc)
 }
 
 func (controller *ControllerQuest) Read(res http.ResponseWriter, req *http.Request) {
-	var entry models.Quest
 	query := req.URL.Query()
-	query_quest_type := query.Get("quest_type")
-	params := mux.Vars(req)
-	id, _ := strconv.Atoi(params["id"])
+	query_type := query.Get("type")
 
-	exists := false
-	for key := range quest_types {
-		if key == query_quest_type {
-			exists = true
-			break
-		}
+	if query_type == "" {
+		json.NewEncoder(res).Encode("Query params 'type' is required. Available: [  quest_*, quest_**, quest_***, quest_****, quest_*****, quest_****** ]")
+		return
 	}
 
-	if query_quest_type == "" {
-		json.NewEncoder(res).Encode("quest_type not provided")
-	}
+	quest_type, exists := quest_types[query_type]
 	if !exists {
-		json.NewEncoder(res).Encode("quest_type not found")
+		json.NewEncoder(res).Encode("Query params 'type' is required. Available: [  quest_*, quest_**, quest_***, quest_****, quest_*****, quest_****** ]")
+		return
 	}
 
-	for key, quest_type := range quest_types {
-		if key == query_quest_type {
-			entry = controller.getEntryByIndex(id, models.QuestType{
-				Type: key,
-				From: quest_type.From,
-				To:   quest_type.To,
-			})
-		}
-	}
-
-	json.NewEncoder(res).Encode(entry)
-}
-
-func (controller *ControllerQuest) getCategory(
-	quest_type_type string,
-	quest_type_from int64,
-	quest_type_to int64,
-) []models.Quest {
-	var entries []models.Quest
-
-	count := (quest_type_to-quest_type_from)/pointers.QuestLength + 1
-	entries = make([]models.Quest, count)
-
-	for index := 0; index < int(count); index++ {
-		entries[index] = controller.getEntryByIndex(index, models.QuestType{
-			Type: quest_type_type,
-			From: quest_type_from,
-			To:   quest_type_to,
+	extractFunc := func(id int) models.Quest {
+		return controller.getEntryByIndex(id, models.QuestType{
+			Type: query_type,
+			From: quest_type.From,
+			To:   quest_type.To,
 		})
 	}
-
-	return entries
+	core.ReadItem(res, req, extractFunc)
 }
 
 func (controller *ControllerQuest) getEntry() models.Quest {

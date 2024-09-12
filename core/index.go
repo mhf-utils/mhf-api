@@ -57,7 +57,7 @@ func Paginate[T any](
 		sort = "id"
 	}
 
-	total_items := (to - from) / length
+	total_items := (to-from)/length + 1
 	offset := int64((page - 1) * limit)
 	if offset > total_items {
 		offset = total_items

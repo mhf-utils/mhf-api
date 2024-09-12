@@ -3,15 +3,13 @@ package controllers
 import (
 	"encoding/json"
 	"io"
+	"mhf-api/core"
 	"mhf-api/server/common"
 	"mhf-api/server/models"
 	"mhf-api/utils/binary"
 	"mhf-api/utils/logger"
 	"mhf-api/utils/pointers"
 	"net/http"
-	"strconv"
-
-	"github.com/gorilla/mux"
 )
 
 var equipment_types = map[string]models.EquipmentType{
@@ -60,98 +58,57 @@ func NewControllerEquipment(log *logger.Logger, binary_file *binary.BinaryFile) 
 }
 
 func (controller *ControllerEquipment) List(res http.ResponseWriter, req *http.Request) {
-	var entries []models.Equipment
 	query := req.URL.Query()
-	query_equipment_type := query.Get("equipment_type")
-	if query_equipment_type == "all" {
-		for key, equipment_type := range equipment_types {
-			equipments := controller.getCategory(
-				key,
-				equipment_type.From,
-				equipment_type.To,
-				equipment_type.Name,
-				equipment_type.Description,
-			)
-			entries = append(entries, equipments...)
-		}
-		json.NewEncoder(res).Encode(entries)
+	query_type := query.Get("type")
+
+	if query_type == "" {
+		json.NewEncoder(res).Encode("Query params 'type' is required. Available: [ helm, chest, arm, waist, leg ]")
+		return
 	}
 
-	equipment_type, exists := equipment_types[query_equipment_type]
+	equipment_type, exists := equipment_types[query_type]
 	if !exists {
-		json.NewEncoder(res).Encode("equipment_type not provided")
+		json.NewEncoder(res).Encode("Query params 'type' is required. Available: [ helm, chest, arm, waist, leg ]")
+		return
 	}
 
-	equipments := controller.getCategory(
-		query_equipment_type,
-		equipment_type.From,
-		equipment_type.To,
-		equipment_type.Name,
-		equipment_type.Description,
-	)
-	json.NewEncoder(res).Encode(equipments)
+	extractFunc := func(index int) models.Equipment {
+		return controller.getEntryByIndex(index, models.EquipmentType{
+			Type:        query_type,
+			From:        equipment_type.From,
+			To:          equipment_type.To,
+			Name:        equipment_type.Name,
+			Description: equipment_type.Description,
+		})
+	}
+	core.Paginate(res, req, equipment_type.From, equipment_type.To, pointers.EquipmentLength, extractFunc)
 }
 
 func (controller *ControllerEquipment) Read(res http.ResponseWriter, req *http.Request) {
-	var entry models.Equipment
 	query := req.URL.Query()
-	query_equipment_type := query.Get("equipment_type")
-	params := mux.Vars(req)
-	id, _ := strconv.Atoi(params["id"])
+	query_type := query.Get("type")
 
-	exists := false
-	for key := range equipment_types {
-		if key == query_equipment_type {
-			exists = true
-			break
-		}
+	if query_type == "" {
+		json.NewEncoder(res).Encode("Query params 'type' is required. Available: [ helm, chest, arm, waist, leg ]")
+		return
 	}
 
-	if query_equipment_type == "" {
-		json.NewEncoder(res).Encode("equipment_type not provided")
-	}
+	equipment_type, exists := equipment_types[query_type]
 	if !exists {
-		json.NewEncoder(res).Encode("equipment_type not found")
+		json.NewEncoder(res).Encode("Query params 'type' is required. Available: [ helm, chest, arm, waist, leg ]")
+		return
 	}
 
-	for key, equipment_type := range equipment_types {
-		if key == query_equipment_type {
-			entry = controller.getEntryByIndex(id, models.EquipmentType{
-				Type:        key,
-				From:        equipment_type.From,
-				To:          equipment_type.To,
-				Name:        equipment_type.Name,
-				Description: equipment_type.Description,
-			})
-		}
-	}
-
-	json.NewEncoder(res).Encode(entry)
-}
-
-func (controller *ControllerEquipment) getCategory(
-	equipment_type_type string,
-	equipment_type_from int64,
-	equipment_type_to int64,
-	equipment_type_name int64,
-	equipment_type_description int,
-) []models.Equipment {
-	var entries []models.Equipment
-
-	count := (equipment_type_to-equipment_type_from)/pointers.EquipmentLength + 1
-	entries = make([]models.Equipment, count)
-
-	for index := 0; index < int(count); index++ {
-		entries[index] = controller.getEntryByIndex(index, models.EquipmentType{
-			Type:        equipment_type_type,
-			From:        equipment_type_from,
-			To:          equipment_type_to,
-			Name:        equipment_type_name,
-			Description: equipment_type_description,
+	extractFunc := func(id int) models.Equipment {
+		return controller.getEntryByIndex(id, models.EquipmentType{
+			Type:        query_type,
+			From:        equipment_type.From,
+			To:          equipment_type.To,
+			Name:        equipment_type.Name,
+			Description: equipment_type.Description,
 		})
 	}
-
-	return entries
+	core.ReadItem(res, req, extractFunc)
 }
 
 func (controller *ControllerEquipment) getEntry(armor_type string) models.Equipment {
