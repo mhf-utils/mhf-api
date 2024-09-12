@@ -1,0 +1,6 @@
+{
+  "Logger": {
+    "Format": "YYYY-DD-MM hh:mm:ss.ms",
+    "FilePath": "./logs/dev"
+  }
+}
