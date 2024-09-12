@@ -10,12 +10,12 @@ import (
 
 var equipment_routes = []Route{
 	{
-		Endpoint: "/equipments",
+		Endpoint: "/equipments/{type}",
 		Handler:  "List",
 		Method:   "GET",
 	},
 	{
-		Endpoint: "/equipments/{id}",
+		Endpoint: "/equipments/{type}/{id}",
 		Handler:  "Read",
 		Method:   "GET",
 	},

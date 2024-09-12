@@ -52,6 +52,7 @@ func IsValidEndpoint(endpoint string, method string) bool {
 
 		route_pattern := route.Endpoint
 		route_pattern = strings.ReplaceAll(route_pattern, "{id}", "[0-9]+")
+		route_pattern = strings.ReplaceAll(route_pattern, "{type}", ".+")
 		matched, err := regexp.MatchString("^"+route_pattern+"$", endpoint)
 
 		if err != nil {

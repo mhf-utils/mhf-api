@@ -9,6 +9,8 @@ import (
 	"mhf-api/utils/logger"
 	"mhf-api/utils/pointers"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 var quest_types = map[string]models.QuestType{
@@ -51,15 +53,14 @@ func NewControllerQuest(log *logger.Logger, binary_file *binary.BinaryFile) *Con
 }
 
 func (controller *ControllerQuest) List(res http.ResponseWriter, req *http.Request) {
-	query := req.URL.Query()
-	query_type := query.Get("type")
+	params := mux.Vars(req)
 
-	if query_type == "" {
+	if params["type"] == "" {
 		json.NewEncoder(res).Encode("Query params 'type' is required. Available: [  quest_*, quest_**, quest_***, quest_****, quest_*****, quest_****** ]")
 		return
 	}
 
-	quest_type, exists := quest_types[query_type]
+	quest_type, exists := quest_types[params["type"]]
 	if !exists {
 		json.NewEncoder(res).Encode("Query params 'type' is required. Available: [  quest_*, quest_**, quest_***, quest_****, quest_*****, quest_****** ]")
 		return
@@ -67,7 +68,7 @@ func (controller *ControllerQuest) List(res http.ResponseWriter, req *http.Reque
 
 	extractFunc := func(index int) models.Quest {
 		return controller.getEntryByIndex(index, models.QuestType{
-			Type: query_type,
+			Type: params["type"],
 			From: quest_type.From,
 			To:   quest_type.To,
 		})
@@ -76,15 +77,14 @@ func (controller *ControllerQuest) List(res http.ResponseWriter, req *http.Reque
 }
 
 func (controller *ControllerQuest) Read(res http.ResponseWriter, req *http.Request) {
-	query := req.URL.Query()
-	query_type := query.Get("type")
+	params := mux.Vars(req)
 
-	if query_type == "" {
+	if params["type"] == "" {
 		json.NewEncoder(res).Encode("Query params 'type' is required. Available: [  quest_*, quest_**, quest_***, quest_****, quest_*****, quest_****** ]")
 		return
 	}
 
-	quest_type, exists := quest_types[query_type]
+	quest_type, exists := quest_types[params["type"]]
 	if !exists {
 		json.NewEncoder(res).Encode("Query params 'type' is required. Available: [  quest_*, quest_**, quest_***, quest_****, quest_*****, quest_****** ]")
 		return
@@ -92,7 +92,7 @@ func (controller *ControllerQuest) Read(res http.ResponseWriter, req *http.Reque
 
 	extractFunc := func(id int) models.Quest {
 		return controller.getEntryByIndex(id, models.QuestType{
-			Type: query_type,
+			Type: params["type"],
 			From: quest_type.From,
 			To:   quest_type.To,
 		})

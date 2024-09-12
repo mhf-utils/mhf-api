@@ -10,12 +10,12 @@ import (
 
 var quest_routes = []Route{
 	{
-		Endpoint: "/quests",
+		Endpoint: "/quests/{type}",
 		Handler:  "List",
 		Method:   "GET",
 	},
 	{
-		Endpoint: "/quests/{id}",
+		Endpoint: "/quests/{type}/{id}",
 		Handler:  "Read",
 		Method:   "GET",
 	},

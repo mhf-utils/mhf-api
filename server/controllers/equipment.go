@@ -10,6 +10,8 @@ import (
 	"mhf-api/utils/logger"
 	"mhf-api/utils/pointers"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 var equipment_types = map[string]models.EquipmentType{
@@ -58,15 +60,14 @@ func NewControllerEquipment(log *logger.Logger, binary_file *binary.BinaryFile) 
 }
 
 func (controller *ControllerEquipment) List(res http.ResponseWriter, req *http.Request) {
-	query := req.URL.Query()
-	query_type := query.Get("type")
+	params := mux.Vars(req)
 
-	if query_type == "" {
+	if params["type"] == "" {
 		json.NewEncoder(res).Encode("Query params 'type' is required. Available: [ helm, chest, arm, waist, leg ]")
 		return
 	}
 
-	equipment_type, exists := equipment_types[query_type]
+	equipment_type, exists := equipment_types[params["type"]]
 	if !exists {
 		json.NewEncoder(res).Encode("Query params 'type' is required. Available: [ helm, chest, arm, waist, leg ]")
 		return
@@ -74,7 +75,7 @@ func (controller *ControllerEquipment) List(res http.ResponseWriter, req *http.R
 
 	extractFunc := func(index int) models.Equipment {
 		return controller.getEntryByIndex(index, models.EquipmentType{
-			Type:        query_type,
+			Type:        params["type"],
 			From:        equipment_type.From,
 			To:          equipment_type.To,
 			Name:        equipment_type.Name,
@@ -85,15 +86,14 @@ func (controller *ControllerEquipment) List(res http.ResponseWriter, req *http.R
 }
 
 func (controller *ControllerEquipment) Read(res http.ResponseWriter, req *http.Request) {
-	query := req.URL.Query()
-	query_type := query.Get("type")
+	params := mux.Vars(req)
 
-	if query_type == "" {
+	if params["type"] == "" {
 		json.NewEncoder(res).Encode("Query params 'type' is required. Available: [ helm, chest, arm, waist, leg ]")
 		return
 	}
 
-	equipment_type, exists := equipment_types[query_type]
+	equipment_type, exists := equipment_types[params["type"]]
 	if !exists {
 		json.NewEncoder(res).Encode("Query params 'type' is required. Available: [ helm, chest, arm, waist, leg ]")
 		return
@@ -101,7 +101,7 @@ func (controller *ControllerEquipment) Read(res http.ResponseWriter, req *http.R
 
 	extractFunc := func(id int) models.Equipment {
 		return controller.getEntryByIndex(id, models.EquipmentType{
-			Type:        query_type,
+			Type:        params["type"],
 			From:        equipment_type.From,
 			To:          equipment_type.To,
 			Name:        equipment_type.Name,
