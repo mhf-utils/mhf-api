@@ -141,8 +141,8 @@ type Mhfdat struct {
 }
 
 type MhfdatInfo struct {
-	FilePath string     // Path to the mhfdat.bin file
-	Enable   bool       // To enable or disable the router linked
+  FilePath string     // Path to the mhfdat.bin file
+  Enable   bool       // To enable or disable the router linked
 }
 
 type NewRelic struct {
