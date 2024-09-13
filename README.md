@@ -21,7 +21,7 @@ This structure ensures efficient request handling, extensibility, and ease of de
 1. Clone the repository:
 
 ```sh
-git clone https://github.com/mhf-utils/mhf-api.git
+git clone https://github.com/mezelounge/mhf-api.git
 ```
 
 2. Install dependencies:
@@ -30,7 +30,7 @@ git clone https://github.com/mhf-utils/mhf-api.git
 go mod download
 ```
 
-3. [Configure your environment](https://github.com/mhf-utils/mhf-api?tab=readme-ov-file#%EF%B8%8F-configuration-overview) variables for logging and monitoring.
+3. [Configure your environment](https://github.com/mezelounge/mhf-api?tab=readme-ov-file#%EF%B8%8F-configuration-overview) variables for logging and monitoring.
 
 ### ▶️ Running the API
 
@@ -135,7 +135,14 @@ type Logger struct {
 }
 
 type Mhfdat struct {
-  FilePath string     // Path to the mhfdat.bin file
+  En MhfdatInfo       // MhfdatInfo for En version
+  Fr MhfdatInfo       // MhfdatInfo for Fr version
+  Jp MhfdatInfo       // MhfdatInfo for Jp version
+}
+
+type MhfdatInfo struct {
+	FilePath string     // Path to the mhfdat.bin file
+	Enable   bool       // To enable or disable the router linked
 }
 
 type NewRelic struct {
@@ -206,7 +213,20 @@ Example of a `mhfdat.json` file:
 
 ```json
 {
-  "filePath": "/path/to/mhfdat.bin"
+  "Mhfdat": {
+    "En": {
+      "FilePath": "/path/to/mhfdat.bin",
+      "Enable": false
+    },
+    "Fr": {
+      "FilePath": "/path/to/mhfdat.bin",
+      "Enable": false
+    },
+    "Jp": {
+      "FilePath": "/path/to/mhfdat.bin",
+      "Enable": false
+    }
+  }
 }
 ```
 
