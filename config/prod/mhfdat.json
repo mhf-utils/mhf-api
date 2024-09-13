@@ -1,13 +1,16 @@
 {
   "Mhfdat": {
     "En": {
-      "FilePath": "<MHFDAT_PATH>"
+      "FilePath": "<MHFDAT_PATH>",
+      "Enable": false
     },
     "Fr": {
-      "FilePath": "<MHFDAT_PATH>"
+      "FilePath": "<MHFDAT_PATH>",
+      "Enable": false
     },
     "Jp": {
-      "FilePath": "<MHFDAT_PATH>"
+      "FilePath": "<MHFDAT_PATH>",
+      "Enable": false
     }
   }
 }

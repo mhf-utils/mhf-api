@@ -31,6 +31,7 @@ type Mhfdat struct {
 
 type MhfdatInfo struct {
 	FilePath string
+	Enable   bool
 }
 type NewRelic struct {
 	License                 string

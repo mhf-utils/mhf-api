@@ -18,20 +18,20 @@ func Init(log *logger.Logger, newRelicApp *newrelic.Application) {
 	router := mux.NewRouter()
 	locales := []string{}
 
-	localesConfig := map[string]string{
-		"/en": config.GlobalConfig.Mhfdat.En.FilePath,
-		"/fr": config.GlobalConfig.Mhfdat.Fr.FilePath,
-		"/jp": config.GlobalConfig.Mhfdat.Jp.FilePath,
+	locales_config := map[string]config.MhfdatInfo{
+		"/en": config.GlobalConfig.Mhfdat.En,
+		"/fr": config.GlobalConfig.Mhfdat.Fr,
+		"/jp": config.GlobalConfig.Mhfdat.Jp,
 	}
 
-	for path, filePath := range localesConfig {
-		if len(filePath) > 0 {
-			binaryFile := binary.GetBinaryFile(filePath)
+	for locale, mhfdat_config := range locales_config {
+		if mhfdat_config.Enable {
+			binaryFile := binary.GetBinaryFile(mhfdat_config.FilePath)
 			defer binaryFile.Close()
 
-			subRouter := router.PathPrefix(path).Subrouter()
-			middlewares.GetRouter(subRouter, log, binaryFile)
-			locales = append(locales, path)
+			subRouter := router.PathPrefix(locale).Subrouter()
+			middlewares.GetRouter(subRouter, locale, log, binaryFile)
+			locales = append(locales, locale)
 		}
 	}
 

@@ -1,13 +1,16 @@
 {
   "Mhfdat": {
     "En": {
-      "FilePath": ""
+      "FilePath": "/home/homework/homelab/www/projects/monster-hunter/mezelounge/front/forge-test/input/mhfdat.bin",
+      "Enable": true
     },
     "Fr": {
-      "FilePath": "/home/homework/homelab/www/projects/monster-hunter/mezelounge/front/forge-test/input/mhfdat.bin"
+      "FilePath": "/home/homework/homelab/www/projects/monster-hunter/mezelounge/front/forge-test/input/mhfdat.bin",
+      "Enable": true
     },
     "Jp": {
-      "FilePath": "/home/homework/Téléchargements/jp.bin"
+      "FilePath": "/home/homework/Téléchargements/jp.bin",
+      "Enable": true
     }
   }
 }

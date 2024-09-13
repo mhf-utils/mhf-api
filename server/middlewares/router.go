@@ -20,8 +20,10 @@ type Route struct {
 	Method   string
 }
 
-func GetRouter(router *mux.Router, log *logger.Logger, binary_file *binary.BinaryFile) *mux.Router {
+func GetRouter(router *mux.Router, locale string, log *logger.Logger, binary_file *binary.BinaryFile) *mux.Router {
 	log.Info("MHF-API:middlewares:router:GetRouter")
+
+	initRoutes(locale)
 
 	GetRouterEquipment(router, log, binary_file)
 	GetRouterItem(router, log, binary_file)
@@ -51,8 +53,11 @@ func RouterKeeper(log *logger.Logger, locales []string) Middleware {
 	}
 }
 
-func isValidEndpoint(locales []string, endpoint string, method string) bool {
+func initRoutes(locale string) []Route {
 	var routes []Route
+
+	fmt.Printf("Routes initialization for locale='%s'\n", locale)
+
 	routes = append(routes, equipment_routes...)
 	routes = append(routes, item_routes...)
 	routes = append(routes, quest_routes...)
@@ -60,15 +65,25 @@ func isValidEndpoint(locales []string, endpoint string, method string) bool {
 	routes = append(routes, weapon_ranged_routes...)
 
 	for _, route := range routes {
-		if route.Method != method {
-			continue
-		}
+		fmt.Printf("[%s] -> '%s' -> %s()\n", route.Method, locale+route.Endpoint, route.Handler)
+	}
 
-		route_pattern := route.Endpoint
-		route_pattern = strings.ReplaceAll(route_pattern, "{id}", "[0-9]+")
-		route_pattern = strings.ReplaceAll(route_pattern, "{type}", ".+")
+	fmt.Printf("Routes for locale='%s' initialized successfully!\n", locale)
 
-		for _, locale := range locales {
+	return routes
+}
+
+func isValidEndpoint(locales []string, endpoint string, method string) bool {
+	for _, locale := range locales {
+		for _, route := range initRoutes(locale) {
+			if route.Method != method {
+				continue
+			}
+
+			route_pattern := route.Endpoint
+			route_pattern = strings.ReplaceAll(route_pattern, "{id}", "[0-9]+")
+			route_pattern = strings.ReplaceAll(route_pattern, "{type}", ".+")
+
 			full_pattern := "^" + locale + route_pattern + "$"
 			matched, err := regexp.MatchString(full_pattern, endpoint)
 
