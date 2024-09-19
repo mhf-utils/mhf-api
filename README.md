@@ -21,7 +21,7 @@ This structure ensures efficient request handling, extensibility, and ease of de
 1. Clone the repository:
 
 ```sh
-git clone https://github.com/mezelounge/mhf-api.git
+git clone https://github.com/mhf-utils/mhf-api.git
 ```
 
 2. Install dependencies:
@@ -30,7 +30,7 @@ git clone https://github.com/mezelounge/mhf-api.git
 go mod download
 ```
 
-3. [Configure your environment](https://github.com/mezelounge/mhf-api?tab=readme-ov-file#%EF%B8%8F-configuration-overview) variables for logging and monitoring.
+3. [Configure your environment](https://github.com/mhf-utils/mhf-api?tab=readme-ov-file#%EF%B8%8F-configuration-overview) variables for logging and monitoring.
 
 ### ▶️ Running the API
 
