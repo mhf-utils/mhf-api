@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"io"
 	"mhf-api/core"
-	"mhf-api/server/models"
+	"mhf-api/server/mhfdat/models"
 	"mhf-api/utils/binary"
 	"mhf-api/utils/logger"
 	"mhf-api/utils/pointers"

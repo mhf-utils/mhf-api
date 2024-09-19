@@ -55,39 +55,83 @@ The project is organized as follows:
 
 ```
 mhf-api/
-├── config/                          # 🔧 For application configurations
-|   ├── dev/                         # 💻 Contains configurations for the development environment
-|   |   ├── base.json                # ⚙️ General configuration (e.g., host, port)
-|   |   ├── logger.json              # 📝 Configuration for logging system
-|   |   ├── mhfdat.json              # 📂 Path to the mhfdat file
-|   |   └── newrelic.json            # 📊 New Relic monitoring parameters
+├── config/                          # 🔧 Where all configurations files are
 |   |
-|   ├── prod/                        # 🏢 Contains configurations for the production environment
-|   |   ├── base.json                # ⚙️ General configuration
-|   |   ├── logger.json              # 📝 Configuration for logging system
-|   |   ├── mhfdat.json              # 📂 Path to the mhfdat file
-|   |   └── newrelic.json            # 📊 New Relic monitoring parameters
+|   ├── dev/                         # 💻 Configurations for the development environment
+|   |   ├── base.json
+|   |   ├── launcher.json
+|   |   ├── locales.json
+|   |   ├── logger.json
+|   |   ├── mhfdat.json
+|   |   └── newrelic.json
 |   |
-|   └── index.go                     # 🗂️ Initializes configurations based on the environment
+|   ├── prod/                        # 🏢 Configurations for the production environment
+|   |   ├── base.json
+|   |   ├── launcher.json
+|   |   ├── locales.json
+|   |   ├── logger.json
+|   |   ├── mhfdat.json
+|   |   └── newrelic.json
+|   |
+|   └── index.go                     # 🚀 Initializes configurations based on the environment
 |
 ├── core/                            # 💡 Contains the core logic of the API
 |   └── index.go                     # ⚙️ Core of the application (main logic)
 |
 ├── server/                          # 🌐 Handles all server-related functionalities (routes, middleware)
+|   |                     
 |   ├── common/                      # 📦 Shared code for various parts of the server
-|   |   └── index.go                 # ⚙️ Shared logic or common code across multiple server components
 |   |
-|   ├── controllers/                 # 🗄️ Folder for request handlers and business logic
-|   |   └── item.go                  # 🛍️ Manages requests related to "items" (CRUD operations)
+|   ├── launcher/
+|   |   |
+|   |   ├── controllers/             # 🕹️ Folder for request handlers and business logic
+|   |   |   ├── check.go
+|   |   |   └── files.go
+|   |   |
+|   |   ├── middlewares/             # 🔗 Contains middleware functions (logging, routing, etc.)
+|   |   |   ├── check.go
+|   |   |   └── files.go
+|   |   |
+|   |   ├── views/                   # 🪟 Contains middleware functions (logging, routing, etc.)
+|   |   |   └── files.go
+|   |   |
+|   |   └── index.go                 # 🌳 Expose routes and router
 |   |
-|   ├── middlewares/                 # 🛡️ Contains middleware functions (logging, routing, etc.)
-|   |   ├── index.go                 # ⚙️ Global middleware functions
-|   |   ├── item.go                  # 🔄 Middleware and routing for item-related requests
-|   |   └── logger.go                # 📝 Middleware for HTTP request logging
+|   ├── mhfdat/
+|   |   |
+|   |   ├── controllers/             # 🕹️ Folder for request handlers and business logic
+|   |   |   ├── equipments.go
+|   |   |   ├── item.go
+|   |   |   ├── quest.go
+|   |   |   ├── quest.go
+|   |   |   ├── weapon_melee.go
+|   |   |   └── weapon_ranged.go
+|   |   |
+|   |   ├── middlewares/             # 🔗 Contains middleware functions (logging, routing, etc.)
+|   |   |   ├── equipments.go
+|   |   |   ├── item.go
+|   |   |   ├── quest.go
+|   |   |   ├── quest.go
+|   |   |   ├── weapon_melee.go
+|   |   |   └── weapon_ranged.go
+|   |   |
+|   |   ├── models/                  # 📚 Contains middleware functions (logging, routing, etc.)
+|   |   |   ├── equipments.go
+|   |   |   ├── item.go
+|   |   |   ├── quest.go
+|   |   |   ├── quest.go
+|   |   |   ├── weapon_melee.go
+|   |   |   └── weapon_ranged.go
+|   |   |
+|   |   ├── shared/                  # 🗂️ Contains middleware functions (logging, routing, etc.)
+|   |   |   └── index.go
+|   |   |
+|   |   └── index.go                 # 🌳 Expose routes and router
 |   |
-|   ├── models/                      # 🏗️ Contains data models representing API objects
-|   |
-|   └── index.go                     # 🚀 Initializes the server, sets up routes, and starts the server
+|   ├── index.go                     # 🚀 Initialize the server
+|   ├── launcher.go                  # 📍 Generate the router
+|   ├── logger.go                    # 📝
+|   └── mhfdat.go                    # 📍 Generate the router
 |
 ├── utils/                           # 🛠️ Folder for utility functions (logging, ASCII art, New Relic)
 |   ├── ascii/                       # 🎨 Contains ASCII art template shown when the server starts
@@ -105,14 +149,7 @@ The API configuration is handled through the `config` package. It uses `viper` t
 
 ### 🗂️ Configuration Files
 
-Within the `config/` directory, there are subdirectories for each environment (e.g., `dev/` and `prod/`), each containing configuration files:
-
-- **`base.json`**: General application settings.
-- **`logger.json`**: Configures the logging system (format and file path).
-- **`mhfdat.json`**: Specifies the path to the `mhfdat` file that the API interacts with.
-- **`newrelic.json`**: Contains settings for New Relic integration, including the license key and app name.
-
-These configuration files allow the application to be easily configured based on the environment in which it's running.
+Within the `config/` directory, there are subdirectories for each environment (e.g., `dev/` and `prod/`)
 
 ### 🛠️ How the Configuration Works
 
@@ -129,20 +166,26 @@ type Config struct {
   NewRelic NewRelic   // New Relic settings
 }
 
-type Logger struct {
-  Format   string     // Logging format (e.g., JSON or text)
-  FilePath string     // File path for log output
+type Info struct {
+  FilePath string     // FilePath
+  Enable   bool       // To enable or disable the router linked
+}
+
+type Launcher struct {
+  En Info             // LauncherInfo for En version
+  Fr Info             // LauncherInfo for Fr version
+  Jp Info             // LauncherInfo for Jp version
 }
 
 type Mhfdat struct {
-  En MhfdatInfo       // MhfdatInfo for En version
-  Fr MhfdatInfo       // MhfdatInfo for Fr version
-  Jp MhfdatInfo       // MhfdatInfo for Jp version
+  En Info             // MhfdatInfo for En version
+  Fr Info             // MhfdatInfo for Fr version
+  Jp Info             // MhfdatInfo for Jp version
 }
 
-type MhfdatInfo struct {
-  FilePath string     // Path to the mhfdat.bin file
-  Enable   bool       // To enable or disable the router linked
+type Logger struct {
+  Format   string     // Logging format (e.g., JSON or text)
+  FilePath string     // File path for log output
 }
 
 type NewRelic struct {
@@ -162,6 +205,8 @@ func LoadConfig(env string) (*Config, error) {
 
   config_files := []ConfigFile{
     {Name: "base"},
+    {Name: "launcher"},
+    {Name: "locales"},
     {Name: "logger"},
     {Name: "mhfdat"},
     {Name: "newrelic"},
@@ -206,6 +251,27 @@ Example of a `logger.json` file:
 {
   "format": "json",
   "filePath": "./logs/app.log"
+}
+```
+
+Example of a `launcher.json` file:
+
+```json
+{
+  "Launcher": {
+    "En": {
+      "FilePath": "/path/to/game_folder",
+      "Enable": false
+    },
+    "Fr": {
+      "FilePath": "/path/to/game_folder",
+      "Enable": false
+    },
+    "Jp": {
+      "FilePath": "/path/to/game_folder",
+      "Enable": false
+    }
+  }
 }
 ```
 

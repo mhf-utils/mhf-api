@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"io"
 	"mhf-api/core"
-	"mhf-api/server/common"
-	"mhf-api/server/models"
+	"mhf-api/server/mhfdat/models"
+	"mhf-api/server/mhfdat/shared"
 	"mhf-api/utils/binary"
 	"mhf-api/utils/logger"
 	"mhf-api/utils/pointers"
@@ -124,16 +124,16 @@ func (controller *ControllerEquipment) getEntry(armor_type string) models.Equipm
 	entry.IsLeg = armor_type == "leg"
 	isMaleEquip := (bitfield & (1 << 0)) != 0
 	isFemaleEquip := (bitfield & (1 << 1)) != 0
-	entry.Gender = common.GetGenderName(isMaleEquip, isFemaleEquip)
+	entry.Gender = shared.GetGenderName(isMaleEquip, isFemaleEquip)
 	isBladeEquip := (bitfield & (1 << 2)) != 0
 	isGunnerEquip := (bitfield & (1 << 3)) != 0
-	entry.Role = common.GetRoleName(isBladeEquip, isGunnerEquip)
+	entry.Role = shared.GetRoleName(isBladeEquip, isGunnerEquip)
 	entry.Bool1 = (bitfield & (1 << 4)) != 0
 	entry.IsSPEquip = (bitfield & (1 << 5)) != 0
 	entry.Bool3 = (bitfield & (1 << 6)) != 0
 	entry.Bool4 = (bitfield & (1 << 7)) != 0
 	rarity, _ := controller.binary_file.ReadByte()
-	entry.Rarity = common.GetRarity(rarity)
+	entry.Rarity = shared.GetRarity(rarity)
 	entry.MaxLevel, _ = controller.binary_file.ReadByte()
 	entry.Unk1_1, _ = controller.binary_file.ReadByte()
 	entry.Unk1_2, _ = controller.binary_file.ReadByte()

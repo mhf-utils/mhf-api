@@ -3,8 +3,8 @@ package controllers
 import (
 	"io"
 	"mhf-api/core"
-	"mhf-api/server/common"
-	"mhf-api/server/models"
+	"mhf-api/server/mhfdat/models"
+	"mhf-api/server/mhfdat/shared"
 	"mhf-api/utils/binary"
 	"mhf-api/utils/logger"
 	"mhf-api/utils/pointers"
@@ -42,11 +42,11 @@ func (controller *ControllerItem) getEntry() models.Item {
 	entry.Unk00, _ = controller.binary_file.ReadByte()
 	entry.Unk01, _ = controller.binary_file.ReadByte()
 	rarity, _ := controller.binary_file.ReadByte()
-	entry.Rarity = common.GetRarity(rarity)
+	entry.Rarity = shared.GetRarity(rarity)
 	entry.MaxStack, _ = controller.binary_file.ReadByte()
 	entry.Unk04, _ = controller.binary_file.ReadByte()
 	iconId, _ := controller.binary_file.ReadByte()
-	entry.IconName = common.GetIconName(iconId)
+	entry.IconName = shared.GetIconName(iconId)
 	entry.IconColor, _ = controller.binary_file.ReadByte()
 	entry.Unk07, _ = controller.binary_file.ReadByte()
 	entry.Unk08, _ = controller.binary_file.ReadInt16()

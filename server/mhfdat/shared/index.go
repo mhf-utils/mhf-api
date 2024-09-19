@@ -1,10 +1,10 @@
-package common
+package shared
 
 import (
 	"fmt"
 )
 
-func GetGenderName(isMaleEquip, isFemaleEquip bool) string {
+func GetGenderName(isMaleEquip bool, isFemaleEquip bool) string {
 	if isMaleEquip && isFemaleEquip {
 		return "mixte"
 	}
@@ -17,7 +17,7 @@ func GetGenderName(isMaleEquip, isFemaleEquip bool) string {
 	return "unknown"
 }
 
-func GetRoleName(isBladeEquip, isGunnerEquip bool) string {
+func GetRoleName(isBladeEquip bool, isGunnerEquip bool) string {
 	if isBladeEquip && isGunnerEquip {
 		return "mixte"
 	}

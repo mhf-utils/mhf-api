@@ -13,25 +13,33 @@ import (
 type Config struct {
 	Host     string
 	Port     string
+	Launcher Launcher
+	Locales  []string
 	Logger   Logger
 	Mhfdat   Mhfdat
 	NewRelic NewRelic
 }
 
-type Logger struct {
-	Format   string
-	FilePath string
+type Info struct {
+	FilePath string // FilePath
+	Enable   bool   // To enable or disable the router linked
+}
+
+type Launcher struct {
+	En Info // LauncherInfo for En version
+	Fr Info // LauncherInfo for Fr version
+	Jp Info // LauncherInfo for Jp version
 }
 
 type Mhfdat struct {
-	En MhfdatInfo
-	Fr MhfdatInfo
-	Jp MhfdatInfo
+	En Info // MhfdatInfo for En version
+	Fr Info // MhfdatInfo for Fr version
+	Jp Info // MhfdatInfo for Jp version
 }
 
-type MhfdatInfo struct {
+type Logger struct {
+	Format   string
 	FilePath string
-	Enable   bool
 }
 type NewRelic struct {
 	License                 string
@@ -60,6 +68,8 @@ func LoadConfig(env string) (*Config, error) {
 
 	config_files := []ConfigFile{
 		{Name: "base"},
+		{Name: "launcher"},
+		{Name: "locales"},
 		{Name: "logger"},
 		{Name: "mhfdat"},
 		{Name: "newrelic"},

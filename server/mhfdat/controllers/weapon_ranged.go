@@ -3,8 +3,8 @@ package controllers
 import (
 	"io"
 	"mhf-api/core"
-	"mhf-api/server/common"
-	"mhf-api/server/models"
+	"mhf-api/server/mhfdat/models"
+	"mhf-api/server/mhfdat/shared"
 	"mhf-api/utils/binary"
 	"mhf-api/utils/logger"
 	"mhf-api/utils/pointers"
@@ -40,12 +40,12 @@ func (controller *ControllerWeaponRanged) Read(res http.ResponseWriter, req *htt
 func (controller *ControllerWeaponRanged) getEntry() models.Ranged {
 	var entry models.Ranged
 	modelId, _ := controller.binary_file.ReadInt16()
-	entry.Model = common.GetModelIdData(modelId)
+	entry.Model = shared.GetModelIdData(modelId)
 	rarity, _ := controller.binary_file.ReadByte()
-	entry.Rarity = common.GetRarity(rarity)
+	entry.Rarity = shared.GetRarity(rarity)
 	entry.MaxSlotsMaybe, _ = controller.binary_file.ReadByte()
 	classId, _ := controller.binary_file.ReadByte()
-	entry.Type = common.GetType(classId)
+	entry.Type = shared.GetType(classId)
 	entry.Unk05, _ = controller.binary_file.ReadByte()
 	entry.Eq, _ = controller.binary_file.ReadByte()
 	entry.Unk07, _ = controller.binary_file.ReadByte()
@@ -61,7 +61,7 @@ func (controller *ControllerWeaponRanged) getEntry() models.Ranged {
 	entry.SortOrderMaybe, _ = controller.binary_file.ReadByte()
 	entry.Unk20, _ = controller.binary_file.ReadByte()
 	elementId, _ := controller.binary_file.ReadByte()
-	entry.Element = common.GetElementName(elementId)
+	entry.Element = shared.GetElementName(elementId)
 	entry.EleDamage, _ = controller.binary_file.ReadByte()
 	entry.Unk23, _ = controller.binary_file.ReadByte()
 	entry.Unk24, _ = controller.binary_file.ReadUInt32()

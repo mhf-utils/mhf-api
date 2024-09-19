@@ -3,8 +3,8 @@ package controllers
 import (
 	"io"
 	"mhf-api/core"
-	"mhf-api/server/common"
-	"mhf-api/server/models"
+	"mhf-api/server/mhfdat/models"
+	"mhf-api/server/mhfdat/shared"
 	"mhf-api/utils/binary"
 	"mhf-api/utils/logger"
 	"mhf-api/utils/pointers"
@@ -40,27 +40,27 @@ func (controller *ControllerWeaponMelee) Read(res http.ResponseWriter, req *http
 func (controller *ControllerWeaponMelee) getEntry() models.Melee {
 	var entry models.Melee
 	modelId, _ := controller.binary_file.ReadInt16()
-	entry.Model = common.GetModelIdData(modelId)
+	entry.Model = shared.GetModelIdData(modelId)
 	rarity, _ := controller.binary_file.ReadByte()
-	entry.Rarity = common.GetRarity(rarity)
+	entry.Rarity = shared.GetRarity(rarity)
 	classId, _ := controller.binary_file.ReadByte()
-	entry.Type = common.GetType(classId)
+	entry.Type = shared.GetType(classId)
 	entry.ZennyCost, _ = controller.binary_file.ReadInt32()
 	sharpnessIdByte, _ := controller.binary_file.ReadByte()
 	entry.SharpnessId = int8(sharpnessIdByte)
 	sharpnessMaxByte, _ := controller.binary_file.ReadByte()
 	entry.SharpnessMax = int8(sharpnessMaxByte)
 	RawDamage, _ := controller.binary_file.ReadInt16()
-	entry.RawDamage = common.GetRawDamage(entry.Type, RawDamage)
+	entry.RawDamage = shared.GetRawDamage(entry.Type, RawDamage)
 	entry.Defense, _ = controller.binary_file.ReadInt16()
 	affinityByte, _ := controller.binary_file.ReadByte()
 	entry.Affinity = int8(affinityByte)
 	elementId, _ := controller.binary_file.ReadByte()
-	entry.Element = common.GetElementName(elementId)
+	entry.Element = shared.GetElementName(elementId)
 	eleDamageByte, _ := controller.binary_file.ReadByte()
 	entry.EleDamage = byte(eleDamageByte) * 10
 	ailmentId, _ := controller.binary_file.ReadByte()
-	entry.Ailment = common.GetAilmentName(ailmentId)
+	entry.Ailment = shared.GetAilmentName(ailmentId)
 	ailDamageByte, _ := controller.binary_file.ReadByte()
 	entry.AilDamage = byte(ailDamageByte) * 10
 	entry.Slots, _ = controller.binary_file.ReadByte()
@@ -90,7 +90,7 @@ func (controller *ControllerWeaponMelee) getEntryByIndex(index int) models.Melee
 	entry.Index = index
 	entry.ID = cursor
 	entry.Name = controller.getName(index, pointers.WeaponMeleeName)
-	entry.Sharpness = controller.getSharpness(entry.SharpnessId, common.GetSharpnessPointerByType(entry.Type))
+	entry.Sharpness = controller.getSharpness(entry.SharpnessId, shared.GetSharpnessPointerByType(entry.Type))
 	entry.Description1,
 		entry.Description2,
 		entry.Description3,

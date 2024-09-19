@@ -1,16 +1,16 @@
 {
   "Mhfdat": {
     "En": {
-      "FilePath": "<MHFDAT_PATH>",
-      "Enable": false
+      "FilePath": "/path/to/game_folder",
+      "Enable": true
     },
     "Fr": {
-      "FilePath": "<MHFDAT_PATH>",
-      "Enable": false
+      "FilePath": "/path/to/game_folder",
+      "Enable": true
     },
     "Jp": {
-      "FilePath": "<MHFDAT_PATH>",
-      "Enable": false
+      "FilePath": "/path/to/game_folder",
+      "Enable": true
     }
   }
 }

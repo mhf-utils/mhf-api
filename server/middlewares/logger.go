@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 
 	_ "github.com/lib/pq"
 
@@ -37,7 +38,11 @@ func Logging(log *logger.Logger, newRelicApp *newrelic.Application) Middleware {
 			customRes := &customResponseWriter{ResponseWriter: res, buf: bytes.Buffer{}}
 
 			defer func() {
-				logWithContext.Info(fmt.Sprintf("Response sent - Endpoint: %s | Body: %s", endpoint, customRes.buf.String()))
+				if strings.Contains(endpoint, "/launcher/files") {
+					logWithContext.Info(fmt.Sprintf("Response sent - Endpoint: %s", endpoint))
+				} else {
+					logWithContext.Info(fmt.Sprintf("Response sent - Endpoint: %s | Body: %s", endpoint, customRes.buf.String()))
+				}
 			}()
 
 			body, err := io.ReadAll(req.Body)
