@@ -92,7 +92,7 @@ mhf-api/
 |   |   |   ├── check.go
 |   |   |   └── files.go
 |   |   |
-|   |   ├── views/                   # 🪟 Contains middleware functions (logging, routing, etc.)
+|   |   ├── views/                   # 🪟 Contains views to render html template
 |   |   |   └── files.go
 |   |   |
 |   |   └── index.go                 # 🌳 Expose routes and router
