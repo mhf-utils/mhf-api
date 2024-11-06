@@ -330,6 +330,11 @@ The `server.Init()` function handles:
 
 ## 🛠️ Example
 
+```sh
+http://localhost:9999/en/mhfdat/equipments/helm?limit=2&page=2
+http://localhost:9999/en/launcher/files
+```
+
 ### Controllers:
 
 This file manages item-related endpoints:
